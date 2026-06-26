@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flexbox, Formularios y React</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .tech-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 99px;
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      color: var(--color-muted);
+    }
+
+    .tech-tag.highlight {
+      background: var(--color-accent-glow);
+      border-color: rgba(108,99,255,0.35);
+      color: var(--color-accent-soft);
+    }
+
+    /* ── Grilla del índice ── */
+    .exercise-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .exercise-card {
+      flex: 1 1 300px;
+      max-width: 340px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .exercise-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--color-accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--transition);
+    }
+
+    .exercise-card:hover {
+      border-color: rgba(108,99,255,0.5);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+    }
+
+    .exercise-card:hover::after { transform: scaleX(1); }
+
+    .card-number {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--color-muted);
+      margin-bottom: 1rem;
+    }
+
+    .card-icon {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .exercise-card h3 {
+      color: var(--color-text);
+      margin-bottom: 0.6rem;
+      font-size: 1.15rem;
+    }
+
+    .exercise-card p {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      flex: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .card-tag {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      padding: 0.2rem 0.55rem;
+      border-radius: 99px;
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      color: var(--color-muted);
+    }
+
+    .arrow {
+      position: absolute;
+      top: 1.75rem;
+      right: 1.75rem;
+      color: var(--color-border);
+      font-size: 1rem;
+      transition: all var(--transition);
+    }
+
+    .exercise-card:hover .arrow {
+      color: var(--color-accent-soft);
+      transform: translate(3px, -3px);
+    }
+
+    /* ── Sección de skills ── */
+    .skills-section {
+      margin-top: 5rem;
+      padding-top: 4rem;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .skill-item {
+      flex: 1 1 160px;
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem;
+    }
+
+    .skill-item .skill-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-bottom: 0.75rem;
+    }
+
+    .skill-item h4 {
+      font-size: 0.9rem;
+      color: var(--color-text);
+      margin-bottom: 0.25rem;
+    }
+
+    .skill-item p {
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .bg-flex  { background: rgba(108,99,255,0.3); }
+    .bg-js    { background: rgba(251,191,36,0.5); }
+    .bg-dom   { background: rgba(52,211,153,0.4); }
+    .bg-react { background: rgba(97,218,251,0.4); }
+  </style>
+</head>
+<body>
+
+  <!-- ══ HEADER ══ -->
+  <header class="site-header">
+    <div class="container">
+      <div class="site-logo">
+        <span class="dot"></span>
+      </div>
+      <nav class="site-nav">
+        <a href="index.html" class="active">Inicio</a>
+        <a href="flexbox.html">Flexbox</a>
+        <a href="personas.html">Personas</a>
+        <a href="react.html">React</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ══ HERO ══ -->
+  <main>
+    <section class="hero container fade-up">
+      <div class="hero-eyebrow">
+        <span>⚡</span> Actividad práctica — Desarrollo Web
+      </div>
+      <h1>Flexbox, <span>Formularios</span><br>y React</h1>
+      <p>Tres ejercicios para explorar el layout moderno con CSS, la manipulación del DOM con JavaScript puro y la construcción de interfaces con React.</p>
+
+      <div class="tech-stack">
+        <span class="tech-tag highlight">HTML5</span>
+        <span class="tech-tag highlight">CSS Flexbox</span>
+        <span class="tech-tag highlight">JavaScript ES6+</span>
+        <span class="tech-tag highlight">React 18</span>
+        <span class="tech-tag">DOM API</span>
+        <span class="tech-tag">Eventos</span>
+        <span class="tech-tag">Componentes</span>
+        <span class="tech-tag">Estado</span>
+      </div>
+    </section>
+
+    <!-- ══ CARDS DE EJERCICIOS ══ -->
+    <section class="container fade-up d2">
+      <div class="exercise-grid">
+
+        <!-- Card 1 -->
+        <a href="flexbox.html" class="exercise-card">
+          <span class="arrow">↗</span>
+          <span class="card-number">// ejercicio 01</span>
+          <div class="card-icon">🎨</div>
+          <h3>Flexbox</h3>
+          <p>Maquetación con CSS Flexbox. Tarjetas generadas desde un arreglo JavaScript con filtrado, ordenamiento y resaltado interactivo.</p>
+          <div class="card-tags">
+            <span class="card-tag">display: flex</span>
+            <span class="card-tag">arreglos</span>
+            <span class="card-tag">DOM</span>
+            <span class="card-tag">filtros</span>
+          </div>
+        </a>
+
+        <!-- Card 2 -->
+        <a href="personas.html" class="exercise-card">
+          <span class="arrow">↗</span>
+          <span class="card-number">// ejercicio 02</span>
+          <div class="card-icon">👤</div>
+          <h3>Personas</h3>
+          <p>Formulario con validación para cargar personas. Tabla con cálculo de IMC, alta y baja de filas mediante manipulación directa del DOM.</p>
+          <div class="card-tags">
+            <span class="card-tag">formulario</span>
+            <span class="card-tag">tabla</span>
+            <span class="card-tag">IMC</span>
+            <span class="card-tag">eventos</span>
+          </div>
+        </a>
+
+        <!-- Card 3 -->
+        <a href="react.html" class="exercise-card">
+          <span class="arrow">↗</span>
+          <span class="card-number">// ejercicio 03</span>
+          <div class="card-icon">⚛️</div>
+          <h3>React</h3>
+          <p>La misma funcionalidad del ejercicio 2 resuelta con React. Componentes funcionales, hooks y gestión de estado declarativa.</p>
+          <div class="card-tags">
+            <span class="card-tag">componentes</span>
+            <span class="card-tag">useState</span>
+            <span class="card-tag">props</span>
+            <span class="card-tag">IMC</span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ══ SKILLS ══ -->
+    <section class="skills-section container fade-up d3">
+      <div class="section-title">// conceptos aplicados</div>
+      <h2>¿Qué cubre este proyecto?</h2>
+      <div class="skills-grid">
+        <div class="skill-item">
+          <div class="skill-dot bg-flex"></div>
+          <h4>CSS Flexbox</h4>
+          <p>Layout unidimensional, alineación, distribución y wrap de elementos.</p>
+        </div>
+        <div class="skill-item">
+          <div class="skill-dot bg-js"></div>
+          <h4>JavaScript</h4>
+          <p>Variables, arreglos, funciones, condicionales y lógica de dominio.</p>
+        </div>
+        <div class="skill-item">
+          <div class="skill-dot bg-dom"></div>
+          <h4>Manipulación del DOM</h4>
+          <p>Creación dinámica de elementos, eventos y actualización de la vista.</p>
+        </div>
+        <div class="skill-item">
+          <div class="skill-dot bg-react"></div>
+          <h4>React</h4>
+          <p>Componentes, estado con hooks, renderizado condicional y listas.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="site-footer">
+    <div class="container">
+      Reynoso Alvaro - 2026
+    </div>
+  </footer>
+
+</body>
+</html>
