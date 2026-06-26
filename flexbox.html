@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flexbox — DevLab</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Barra de controles ── */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .controls-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-muted);
+      flex-shrink: 0;
+    }
+
+    .filter-btn {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 99px;
+      border: 1px solid var(--color-border);
+      background: var(--color-card);
+      color: var(--color-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .filter-btn:hover {
+      border-color: var(--color-accent-soft);
+      color: var(--color-text);
+    }
+
+    .filter-btn.active {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: #fff;
+    }
+
+    .divider {
+      width: 1px;
+      height: 24px;
+      background: var(--color-border);
+      flex-shrink: 0;
+    }
+
+    /* ── GRILLA FLEXBOX ── */
+    #cards-container {
+      /* ★ FLEXBOX en acción: wrap, gap, alineación */
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      align-items: stretch;
+      justify-content: flex-start;
+    }
+
+    /* ── Tarjeta de tecnología ── */
+    .tech-card {
+      /* flex-basis controla el ancho mínimo */
+      flex: 1 1 260px;
+      max-width: 340px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .tech-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--card-accent, var(--color-accent));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--transition);
+    }
+
+    .tech-card:hover {
+      border-color: rgba(108,99,255,0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+    }
+
+    .tech-card:hover::before { transform: scaleX(1); }
+
+    .tech-card.highlighted {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 2px var(--color-accent-glow),
+                  0 8px 28px rgba(0,0,0,0.35);
+    }
+
+    .tech-card.highlighted::before { transform: scaleX(1); }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .tech-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .category-tag {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 99px;
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      color: var(--color-muted);
+    }
+
+    .tech-card h3 {
+      font-size: 1.1rem;
+      color: var(--color-text);
+    }
+
+    .tech-card p {
+      font-size: 0.86rem;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--color-border);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--color-muted);
+    }
+
+    .difficulty-bar {
+      display: flex;
+      gap: 3px;
+    }
+
+    .diff-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-border);
+    }
+
+    .diff-dot.on { background: var(--card-accent, var(--color-accent)); }
+
+    /* ── Contador de resultados ── */
+    #result-count {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--color-muted);
+      padding: 0.35rem 0.85rem;
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: 99px;
+      margin-left: auto;
+    }
+
+    /* Transición de aparición de tarjetas */
+    .tech-card {
+      animation: fadeUp 0.35s ease both;
+    }
+
+    /* Leyenda de Flexbox */
+    .flex-legend {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-left: 3px solid var(--color-accent);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 0.85rem;
+    }
+
+    .flex-legend strong { color: var(--color-accent-soft); font-family: var(--font-mono); }
+    .flex-legend p { margin-top: 0.35rem; color: var(--color-muted); }
+
+    .flex-props {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .flex-prop {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.2rem 0.6rem;
+      background: var(--color-accent-glow);
+      border: 1px solid rgba(108,99,255,0.3);
+      border-radius: 99px;
+      color: var(--color-accent-soft);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ HEADER ══ -->
+  <header class="site-header">
+    <div class="container">
+      <div class="site-logo">
+        <span class="dot"></span>
+      </div>
+      <nav class="site-nav">
+        <a href="index.html">Inicio</a>
+        <a href="flexbox.html" class="active">Flexbox</a>
+        <a href="personas.html">Personas</a>
+        <a href="react.html">React</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ══ HERO ══ -->
+    <section class="hero container fade-up">
+      <div class="hero-eyebrow">
+        <span></span> Ejercicio 01
+      </div>
+      <h1>Maquetación con <span>Flexbox</span></h1>
+      <p>Tarjetas generadas desde JavaScript, organizadas con display: flex. Filtrá por categoría, ordená por nombre o nivel, y resaltá tarjetas.</p>
+    </section>
+
+    <div class="container">
+
+      <!-- ══ NOTA TÉCNICA ══ -->
+      <div class="flex-legend fade-up d1">
+        <strong>Propiedades Flexbox en uso</strong>
+        <p>El contenedor <code>#cards-container</code> aplica las siguientes propiedades para organizar las tarjetas:</p>
+        <div class="flex-props">
+          <span class="flex-prop">display: flex</span>
+          <span class="flex-prop">flex-wrap: wrap</span>
+          <span class="flex-prop">gap: 1.25rem</span>
+          <span class="flex-prop">align-items: stretch</span>
+          <span class="flex-prop">justify-content: flex-start</span>
+          <span class="flex-prop">flex: 1 1 260px</span>
+          <span class="flex-prop">flex-direction: column</span>
+        </div>
+      </div>
+
+      <!-- ══ CONTROLES ══ -->
+      <div class="controls fade-up d2">
+        <span class="controls-label">Filtrar:</span>
+        <button class="filter-btn active" data-filter="all" onclick="filterCards('all')">Todas</button>
+        <button class="filter-btn" data-filter="frontend" onclick="filterCards('frontend')">Frontend</button>
+        <button class="filter-btn" data-filter="backend" onclick="filterCards('backend')">Backend</button>
+        <button class="filter-btn" data-filter="tooling" onclick="filterCards('tooling')">Tooling</button>
+
+        <div class="divider"></div>
+
+        <span class="controls-label">Ordenar:</span>
+        <button class="btn btn-ghost" onclick="sortCards('name')">A–Z</button>
+        <button class="btn btn-ghost" onclick="sortCards('level')">Nivel</button>
+        <button class="btn btn-ghost" onclick="shuffleCards()">Mezclar</button>
+
+        <div class="divider"></div>
+
+        <button class="btn btn-ghost" onclick="highlightRandom()">Destacar</button>
+        <button class="btn btn-ghost" onclick="clearHighlights()">Limpiar</button>
+
+        <span id="result-count">6 de 9</span>
+      </div>
+
+      <!-- ══ GRILLA FLEXBOX ══ -->
+      <div id="cards-container" class="fade-up d3">
+        <!-- generado por JavaScript -->
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="site-footer">
+    <div class="container">
+      <a href="index.html">← Volver al inicio</a> Alvaro Reynoso - 2026
+    </div>
+  </footer>
+
+  <script>
+    /* ================================================================
+       DATOS — arreglo de tecnologías
+    ================================================================ */
+    const tecnologias = [
+      {
+        id: 1,
+        nombre: 'React',
+        icon: '⚛️',
+        categoria: 'frontend',
+        descripcion: 'Biblioteca de JavaScript para construir interfaces de usuario declarativas con componentes y estado reactivo.',
+        nivel: 3,
+        anio: 2013,
+        acento: '#61dafb',
+      },
+      {
+        id: 2,
+        nombre: 'CSS Flexbox',
+        icon: '🎨',
+        categoria: 'frontend',
+        descripcion: 'Modelo de layout unidimensional que simplifica la alineación y distribución de elementos en filas o columnas.',
+        nivel: 2,
+        anio: 2009,
+        acento: '#6c63ff',
+      },
+      {
+        id: 3,
+        nombre: 'Node.js',
+        icon: '🟢',
+        categoria: 'backend',
+        descripcion: 'Entorno de ejecución de JavaScript del lado del servidor, orientado a I/O no bloqueante y eventos asíncronos.',
+        nivel: 3,
+        anio: 2009,
+        acento: '#34d399',
+      },
+      {
+        id: 4,
+        nombre: 'Git',
+        icon: '🔀',
+        categoria: 'tooling',
+        descripcion: 'Sistema de control de versiones distribuido que permite rastrear cambios y colaborar en proyectos de cualquier tamaño.',
+        nivel: 2,
+        anio: 2005,
+        acento: '#f87171',
+      },
+      {
+        id: 5,
+        nombre: 'TypeScript',
+        icon: '🔷',
+        categoria: 'frontend',
+        descripcion: 'Superset tipado de JavaScript que añade anotaciones de tipo estáticas y herramientas de análisis en tiempo de desarrollo.',
+        nivel: 3,
+        anio: 2012,
+        acento: '#3b82f6',
+      },
+      {
+        id: 6,
+        nombre: 'Python',
+        icon: '🐍',
+        categoria: 'backend',
+        descripcion: 'Lenguaje de alto nivel, multipropósito, con sintaxis clara. Popular en ciencia de datos, scripting y desarrollo web.',
+        nivel: 2,
+        anio: 1991,
+        acento: '#fbbf24',
+      },
+      {
+        id: 7,
+        nombre: 'Vite',
+        icon: '⚡',
+        categoria: 'tooling',
+        descripcion: 'Bundler y servidor de desarrollo ultra-rápido que aprovecha los módulos nativos de ES para hot-reload instantáneo.',
+        nivel: 2,
+        anio: 2020,
+        acento: '#a89cf7',
+      },
+      {
+        id: 8,
+        nombre: 'SQL',
+        icon: '🗃️',
+        categoria: 'backend',
+        descripcion: 'Lenguaje estándar para gestionar bases de datos relacionales: consultas, inserciones, actualizaciones y diseño de esquemas.',
+        nivel: 2,
+        anio: 1974,
+        acento: '#f59e0b',
+      },
+      {
+        id: 9,
+        nombre: 'GitHub Actions',
+        icon: '🤖',
+        categoria: 'tooling',
+        descripcion: 'Plataforma de CI/CD integrada en GitHub para automatizar flujos de trabajo: tests, builds y despliegues en cada push.',
+        nivel: 3,
+        anio: 2018,
+        acento: '#60a5fa',
+      },
+    ];
+
+    /* ── estado de la UI ── */
+    let filtroActual = 'all';
+    let datosActuales = [...tecnologias];
+
+    /* ================================================================
+       RENDERIZADO
+    ================================================================ */
+    function renderCards(datos) {
+      const container = document.getElementById('cards-container');
+      const countEl   = document.getElementById('result-count');
+
+      container.innerHTML = '';
+
+      if (datos.length === 0) {
+        container.innerHTML = `
+          <div class="table-empty" style="width:100%;padding:3rem 1rem;">
+            <span class="empty-icon">🔍</span>
+            No hay tecnologías en esta categoría todavía.
+          </div>`;
+        countEl.textContent = '0 resultados';
+        return;
+      }
+
+      datos.forEach(function(tech, index) {
+        var card = crearTarjeta(tech, index);
+        container.appendChild(card);
+      });
+
+      var total = tecnologias.length;
+      var texto = filtroActual === 'all'
+        ? datos.length + ' tecnolog' + (datos.length === 1 ? 'ía' : 'ías')
+        : datos.length + ' de ' + total;
+      countEl.textContent = texto;
+    }
+
+    function crearTarjeta(tech, index) {
+      var card = document.createElement('div');
+      card.className = 'tech-card';
+      card.style.setProperty('--card-accent', tech.acento);
+      card.style.animationDelay = (index * 0.06) + 's';
+      card.dataset.id = tech.id;
+
+      /* Puntos de dificultad */
+      var dots = '';
+      for (var i = 1; i <= 3; i++) {
+        dots += '<div class="diff-dot' + (i <= tech.nivel ? ' on' : '') + '"></div>';
+      }
+
+      var labels = { frontend: 'Frontend', backend: 'Backend', tooling: 'Tooling' };
+
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="tech-icon">${tech.icon}</span>
+          <span class="category-tag">${labels[tech.categoria]}</span>
+        </div>
+        <h3>${tech.nombre}</h3>
+        <p>${tech.descripcion}</p>
+        <div class="card-meta">
+          <span>desde ${tech.anio}</span>
+          <div class="difficulty-bar">${dots}</div>
+        </div>
+      `;
+
+      /* Resaltar al hacer clic */
+      card.addEventListener('click', function() {
+        this.classList.toggle('highlighted');
+      });
+
+      return card;
+    }
+
+    /* ================================================================
+       FILTRADO
+    ================================================================ */
+    function filterCards(categoria) {
+      filtroActual = categoria;
+
+      /* Actualizar botones activos */
+      document.querySelectorAll('.filter-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.filter === categoria);
+      });
+
+      /* Filtrar el arreglo */
+      if (categoria === 'all') {
+        datosActuales = [...tecnologias];
+      } else {
+        datosActuales = tecnologias.filter(function(t) {
+          return t.categoria === categoria;
+        });
+      }
+
+      renderCards(datosActuales);
+    }
+
+    /* ================================================================
+       ORDENAMIENTO
+    ================================================================ */
+    function sortCards(criterio) {
+      var copia = [...datosActuales];
+
+      if (criterio === 'name') {
+        copia.sort(function(a, b) {
+          return a.nombre.localeCompare(b.nombre);
+        });
+      } else if (criterio === 'level') {
+        copia.sort(function(a, b) {
+          return b.nivel - a.nivel;
+        });
+      }
+
+      datosActuales = copia;
+      renderCards(datosActuales);
+    }
+
+    /* ================================================================
+       MEZCLAR (shuffle Fisher-Yates)
+    ================================================================ */
+    function shuffleCards() {
+      var arr = [...datosActuales];
+      for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+      }
+      datosActuales = arr;
+      renderCards(datosActuales);
+    }
+
+    /* ================================================================
+       RESALTAR ALEATORIA
+    ================================================================ */
+    function highlightRandom() {
+      var cards = document.querySelectorAll('.tech-card');
+      if (cards.length === 0) return;
+
+      var idx = Math.floor(Math.random() * cards.length);
+      cards[idx].classList.add('highlighted');
+      cards[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll('.tech-card.highlighted').forEach(function(c) {
+        c.classList.remove('highlighted');
+      });
+    }
+
+    /* ── Render inicial ── */
+    renderCards(datosActuales);
+  </script>
+
+</body>
+</html>
